@@ -80,7 +80,6 @@ pub(crate) unsafe fn blocking_erase_sector(sector: &FlashSector) -> Result<(), E
             w.set_per(pac::flash::vals::SeccrPer::B_0X1);
             w.set_pnb(sector.index_in_bank)
         });
-        
     } else {
         pac::FLASH.nscr().modify(|w| {
             w.set_per(pac::flash::vals::NscrPer::B_0X1);
@@ -97,16 +96,16 @@ pub(crate) unsafe fn blocking_erase_sector(sector: &FlashSector) -> Result<(), E
             w.set_strt(true);
         });
     }
-    
+
     let ret: Result<(), Error> = blocking_wait_ready();
     if is_trustzone_enabled() {
         pac::FLASH
-        .seccr()
-        .modify(|w| w.set_per(pac::flash::vals::SeccrPer::B_0X0));
+            .seccr()
+            .modify(|w| w.set_per(pac::flash::vals::SeccrPer::B_0X0));
     } else {
         pac::FLASH
-        .nscr()
-        .modify(|w| w.set_per(pac::flash::vals::NscrPer::B_0X0));
+            .nscr()
+            .modify(|w| w.set_per(pac::flash::vals::NscrPer::B_0X0));
     }
     clear_all_err();
     ret
@@ -131,23 +130,23 @@ unsafe fn blocking_wait_ready() -> Result<(), Error> {
                 if sr.pgserr() {
                     return Err(Error::Seq);
                 }
-    
+
                 if sr.sizerr() {
                     return Err(Error::Size);
                 }
-    
+
                 if sr.pgaerr() {
                     return Err(Error::Unaligned);
                 }
-    
+
                 if sr.wrperr() {
                     return Err(Error::Protected);
                 }
-    
+
                 if sr.progerr() {
                     return Err(Error::Prog);
                 }
-    
+
                 return Ok(());
             }
         } else {
@@ -157,23 +156,23 @@ unsafe fn blocking_wait_ready() -> Result<(), Error> {
                 if sr.pgserr() {
                     return Err(Error::Seq);
                 }
-    
+
                 if sr.sizerr() {
                     return Err(Error::Size);
                 }
-    
+
                 if sr.pgaerr() {
                     return Err(Error::Unaligned);
                 }
-    
+
                 if sr.wrperr() {
                     return Err(Error::Protected);
                 }
-    
+
                 if sr.progerr() {
                     return Err(Error::Prog);
                 }
-    
+
                 return Ok(());
             }
         }
