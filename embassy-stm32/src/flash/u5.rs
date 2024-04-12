@@ -78,11 +78,21 @@ pub(crate) unsafe fn blocking_erase_sector(sector: &FlashSector) -> Result<(), E
     if is_trustzone_enabled() {
         pac::FLASH.seccr().modify(|w| {
             w.set_per(pac::flash::vals::SeccrPer::B_0X1);
+            match sector.bank {
+                super::FlashBank::Bank1 => w.set_bker(pac::flash::vals::SeccrBker::B_0X0),
+                super::FlashBank::Bank2 => w.set_bker(pac::flash::vals::SeccrBker::B_0X1),
+                super::FlashBank::Otp => { panic!("Unsupported"); },
+            }
             w.set_pnb(sector.index_in_bank)
         });
     } else {
         pac::FLASH.nscr().modify(|w| {
             w.set_per(pac::flash::vals::NscrPer::B_0X1);
+            match sector.bank {
+                super::FlashBank::Bank1 => w.set_bker(pac::flash::vals::NscrBker::B_0X0),
+                super::FlashBank::Bank2 => w.set_bker(pac::flash::vals::NscrBker::B_0X1),
+                super::FlashBank::Otp => { panic!("Unsupported"); },
+            }
             w.set_pnb(sector.index_in_bank)
         });
     }
