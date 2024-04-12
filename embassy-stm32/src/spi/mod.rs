@@ -738,7 +738,7 @@ impl RegsExt for Regs {
         #[cfg(not(any(spi_v3, spi_v4, spi_v5)))]
         let dr = self.dr();
         #[cfg(any(spi_v3, spi_v4, spi_v5))]
-        let dr = self.txdr();
+        let dr = self.txdr32();
         dr.as_ptr() as *mut W
     }
 
@@ -746,7 +746,7 @@ impl RegsExt for Regs {
         #[cfg(not(any(spi_v3, spi_v4, spi_v5)))]
         let dr = self.dr();
         #[cfg(any(spi_v3, spi_v4, spi_v5))]
-        let dr = self.rxdr();
+        let dr = self.rxdr8();
         dr.as_ptr() as *mut W
     }
 }
@@ -819,7 +819,7 @@ fn flush_rx_fifo(regs: Regs) {
     }
     #[cfg(any(spi_v3, spi_v4, spi_v5))]
     while regs.sr().read().rxp() {
-        let _ = regs.rxdr().read();
+        let _ = regs.rxdr32().read();
     }
 }
 
